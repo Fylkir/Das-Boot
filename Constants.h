@@ -1,0 +1,2 @@
+#pragma once
+#define RIV_SEGMENTS 100 //LICZBA SEGMENTOW RZEKI
