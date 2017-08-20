@@ -4,11 +4,7 @@
 
 River::River()
 {
-	float beg = -100.;
-	for (int i = 0; i < RIV_SEGMENTS; i++)
-	{
-		rivSeg.push_back(new RiverSegment(200., 600., 200., 600., beg + i*800/RIV_SEGMENTS, 0));
-	}
+	Reset();
 }
 
 
@@ -16,110 +12,170 @@ River::~River()
 {
 }
 
-void River::Update(float& time)
+void River::Update(const float& time)
 {
 	/****AKTUALIZACJA POLOZENIA I STANU STATKOW NA RZECE****/
-	scoreGain = 0;
-	for (itBoat = boats.begin(); itBoat != boats.end(); itBoat++)
+	_scoreGain = 0;
+	for (_boats_it = _boats_l.begin(); _boats_it != _boats_l.end(); _boats_it++)
 	{
-		(*itBoat)->Update(time);
-		scoreGain += (*itBoat)->IsShot(torpedos, itTorp);
-
+		(*_boats_it).Update(time);
+		(*_boats_it).CheckShots(_torpedos_l, _torpedos_it);
 	}
-	/****AKTUALIZACJA POLOZENIA SEGMENTOW RZEKI I STRZALOW W NIE****/
-	for (itSeg = rivSeg.begin(); itSeg != rivSeg.end(); itSeg++)
+	/****AKTUALIZACJA POLOZENIA SEGMENTOW RZEKI ****/
+	for (_rivSeg_it = _rivSeg_l.begin(); _rivSeg_it != _rivSeg_l.end(); _rivSeg_it++)
 	{
-		(*itSeg)->Update(time);
-		(*itSeg)->IsShot(torpedos, itTorp);
+		(*_rivSeg_it).Update(time);
+		(*_rivSeg_it).CheckShots(_torpedos_l, _torpedos_it);
 	}
 	/****AKTUALIZACJA POLOZENIA TORPED****/
-	for (itTorp = torpedos.begin(); itTorp != torpedos.end(); itTorp++)
+	for (_torpedos_it = _torpedos_l.begin(); _torpedos_it != _torpedos_l.end(); _torpedos_it++)
 	{
-		(*itTorp)->Update(time);
+		(*_torpedos_it).Update(time);
 	}
 
 	/****AKTUALIZACJA POLOZENIA PALIWA****/
-	for (itFuel = fuel.begin(); itFuel != fuel.end(); itFuel++)
+	for (_fuel_it = _fuel_l.begin(); _fuel_it != _fuel_l.end(); _fuel_it++)
 	{
-		(*itFuel)->Update(time);
+		(*_fuel_it).Update(time);
 	}
 
 	/****USUWANIE OBIEKTOW WYCHODZACYCH ZA EKRAN I ZESTRZELONYCH****/
-	if (rivSeg.back()->IsOutOfScreen()) rivSeg.pop_back();
+	if (_rivSeg_l.back().IsOutOfScreen()) _rivSeg_l.pop_back();
 
-	boats.remove_if([](Boat* b) {return b->IsOutOfScreen()||b->Shot; });
-
-
-	torpedos.remove_if([](Torpedo* t) {return t->Shot || t->IsOutOfScreen(); });
-	fuel.remove_if([](Fuel* f) {return f->Shot || f->IsOutOfScreen() || f->Hit; });
+	_boats_l.remove_if([](Boat& b) {return b.IsOutOfScreen() || b.IsShot(); });
+	_torpedos_l.remove_if([](Torpedo& t) {return t.IsShot() || t.IsOutOfScreen(); });
+	_fuel_l.remove_if([](Fuel& f) {return f.IsShot()|| f.IsOutOfScreen() || f.IsHit(); });
 	
 
+	///////////////////////////////////
+	// OGARNAC LOSOWANIE
+	//////////////////////////////////
+
 	/****DODAWANIE NOWYCH OBIEKTOW PRZED EKRANEM****/
-	if (rivSeg.size() < RIV_SEGMENTS) rivSeg.push_front(new RiverSegment(rivSeg.front()->getLeftBank(), rivSeg.front()->getRightBank(), rand() % 11 + rivSeg.front()->getLeftBank() - 5, rand() % 11 + rivSeg.front()->getRightBank() - 5, rivSeg.front()->getY() - 800. / RIV_SEGMENTS, time));
-	if ((rand() % 1000)>990) boats.push_back(new Boat(rivSeg.front()->getX(), rivSeg.front()->getY(), rand() % (int)(rivSeg.front()->getSpan()/2. - 20), rand() % 20 / 2., time));
-	if ((rand() % 1000)>990) fuel.push_back(new Fuel(rand() % rand() % (int)(rivSeg.front()->getSpan() - 20) + rivSeg.front()->getLeftBank() + 10, rivSeg.front()->getY(), time));
+	if (_rivSeg_l.size() < RIV_SEGMENTS) _rivSeg_l.push_front(RiverSegment(_rivSeg_l.front().getLeftBank(), _rivSeg_l.front().getRightBank(), rand() % 11 + _rivSeg_l.front().getLeftBank() - 5, rand() % 11 + _rivSeg_l.front().getRightBank() - 5, _rivSeg_l.front().getY() - 800. / RIV_SEGMENTS, time));
+	if ((rand() % 1000)>990) _boats_l.push_back(Boat(_rivSeg_l.front().getX(), _rivSeg_l.front().getY(), rand() % (int)(_rivSeg_l.front().getSpan()/2. - 20), rand() % 20 / 2., time));
+	if ((rand() % 1000)>990) _fuel_l.push_back(Fuel(rand() % rand() % (int)(_rivSeg_l.front().getSpan() - 20) + _rivSeg_l.front().getLeftBank() + 10, _rivSeg_l.front().getY(), time));
 	
 
 }
 void River::Render()
 {
 	/****RENDERUJ SEGMENTY RZEKI****/
-	for (itSeg = rivSeg.begin(); itSeg != rivSeg.end(); itSeg++)
+	for (_rivSeg_it = _rivSeg_l.begin(); _rivSeg_it != _rivSeg_l.end(); _rivSeg_it++)
 	{
-		(*itSeg)->Render();
+		(*_rivSeg_it).Render();
 	}
 
 	/****RENDERUJ LODZIE****/
-	for (itBoat = boats.begin(); itBoat != boats.end(); itBoat++)
+	for (_boats_it = _boats_l.begin(); _boats_it != _boats_l.end(); _boats_it++)
 	{
-		(*itBoat)->Render();
+		(*_boats_it).Render();
 	}
 
 	/****RENDERUJ TORPEDY****/
-	for (itTorp = torpedos.begin(); itTorp != torpedos.end(); itTorp++)
+	for (_torpedos_it = _torpedos_l.begin(); _torpedos_it != _torpedos_l.end(); _torpedos_it++)
 	{
-		(*itTorp)->Render();
+		(*_torpedos_it).Render();
 	}
 
 	/****RENDERUJ PALIWO****/
-	for (itFuel = fuel.begin(); itFuel != fuel.end(); itFuel++)
+	for (_fuel_it = _fuel_l.begin(); _fuel_it != _fuel_l.end(); _fuel_it++)
 	{
-		(*itFuel)->Render();
+		(*_fuel_it).Render();
 	}
 }
 
-bool River::IsHit(PlayerBoat* pB)
+void River::CheckHits(PlayerBoat& pB)
 {
-	for (itSeg = rivSeg.begin(); itSeg != rivSeg.end(); itSeg++)
+
+
+	for (_rivSeg_it = _rivSeg_l.begin(); _rivSeg_it != _rivSeg_l.end(); _rivSeg_it++)
 	{
-		if ((*itSeg)->IsHit(pB)) return true;
+		(*_rivSeg_it).CheckHits(pB);
+		if ((*_rivSeg_it).IsHit())
+		{
+			_isHit = true;
+			return;
+		}
 	}
 	
-	for (itBoat = boats.begin(); itBoat != boats.end(); itBoat++)
+	for (_boats_it = _boats_l.begin(); _boats_it != _boats_l.end(); _boats_it++)
 	{
-		if((*itBoat)->IsHit(pB)) return true;
+		(*_boats_it).CheckHits(pB);
+		if ((*_boats_it).IsHit())
+		{
+			_isHit = true;
+			return;
+		}
 	}
-	return false;
+
+	for (_fuel_it = _fuel_l.begin(); _fuel_it != _fuel_l.end(); _fuel_it++)
+	{
+		(*_fuel_it).CheckHits(pB);
+	}
+
+	CheckShots(_torpedos_l, _torpedos_it);
+
+}
+
+void River::CheckShots(std::list<Torpedo>& t , std::list<Torpedo>::iterator & it)
+{
+	for (_rivSeg_it = _rivSeg_l.begin(); _rivSeg_it != _rivSeg_l.end(); _rivSeg_it++)
+	{
+		(*_rivSeg_it).CheckShots(_torpedos_l, _torpedos_it);
+	}
+
+	for (_boats_it = _boats_l.begin(); _boats_it != _boats_l.end(); _boats_it++)
+	{
+		(*_boats_it).CheckShots(_torpedos_l, _torpedos_it);
+	}
+
+	for (_fuel_it = _fuel_l.begin(); _fuel_it != _fuel_l.end(); _fuel_it++)
+	{
+		(*_fuel_it).CheckShots(_torpedos_l, _torpedos_it);
+	}
 }
 
 void River::InsertTorpedo(float x, float y, float& time)
 {
-	torpedos.push_back(new Torpedo(x, y, time));
+	_torpedos_l.push_back(Torpedo(x, y, time));
 }
 
-int River::Refuel(PlayerBoat* pB)
+void River::Reset()
 {
-	int r = 0;
-	for (itFuel = fuel.begin(); itFuel != fuel.end(); itFuel++)
+	_rivSeg_l.clear();
+	_torpedos_l.clear();
+	_boats_l.clear();
+	_isHit = false;
+	_isShot = false;
+	
+	float beg = -100.;
+	for (int i = 0; i < RIV_SEGMENTS; i++)
 	{
-		if((*itFuel)->IsHit(pB)) r++;
+		_rivSeg_l.push_back(RiverSegment(200., 600., 200., 600., beg + i * 800 / RIV_SEGMENTS, 0));
 	}
 
-	return 20*r;
+
+}
+
+int River::Refuel(PlayerBoat& pB)
+{
+	int r = 0;
+	for (_fuel_it = _fuel_l.begin(); _fuel_it != _fuel_l.end(); _fuel_it++)
+	{
+		if((*_fuel_it).IsHit()) r++;
+	}
+
+	return FUEL_MULTIPLIER * r;
 }
 
 int River::GainScore()
 {
-	return 10*scoreGain;
+	int s = 0;
+	for (_boats_it = _boats_l.begin(); _boats_it != _boats_l.end(); _boats_it++)
+	{
+		if ((*_boats_it).IsShot()) s++;
+	}
+	return SCORE_MULTIPLIER * s;
 }
 

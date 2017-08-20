@@ -8,12 +8,16 @@ class GameController
 	GameController();
 
 
-	static Timer* timer;
-	static GameLevel* currentLevel;
-public:
-	static std::vector<GameLevel*> _levels;
-	static std::vector<GameLevel*>::iterator itLev;
+	static Timer _timer;
+	static GameLevel* _currentLevel;
+	static std::vector<GameLevel*> _levels_v;
+	static std::vector<GameLevel*>::iterator _levels_it;
 	static bool Loading;
+
+
+public:
+
+
 	static void LoadLevels(std::vector<GameLevel*> levels);
 	static void SwitchLevel(int a);
 	static void Init();

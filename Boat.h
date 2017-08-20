@@ -8,20 +8,22 @@
 class Boat : public NonPlayableObject
 {
 
-
+	static Texture* _tex;
 	float _a, _b; // FUNKCJA RUCHU X = ASIN(BT) + X_0
 	
 public:
-	static Texture* tex;
-	bool Shot;
+
 
 	Boat(float x, float y, float a, float b, float t0);
 	~Boat();
 
-	void Move(float time);
-	void Update(float& time);
-	bool IsHit(PlayerBoat* pB);
-	int IsShot(std::list<Torpedo*>& t, std::list<Torpedo*>::iterator& it);
+	static void LoadTexture();
+	static void UnloadTexture();
+
+	void Move(const float& time);
+	void Update(const float& time);
+	void CheckHits(PlayerBoat& pB) override;
+	void CheckShots(std::list<Torpedo>& t, std::list<Torpedo>::iterator& it) override;
 	void Render() override;
 
 

@@ -9,18 +9,24 @@ class PlayerBoat :
 	public GameObject
 {
 
-	const float speed = 200.;
+private:
+	static Texture* _tex;
+	bool _isHit;
 
 public:
-	static Texture* tex;
+
 	PlayerBoat();
 	~PlayerBoat();
 
-	bool ProcessKey(int&h, int&v, int&s, double dtime);
-	void Move(int& h, int& v, double dtime);
+	bool ProcessKey(int&h, int&v, int&s, const double& dtime);
+	void Move(const int& h,const int& v, const double& dtime);
 	bool Shoot(int& s);
-	void Update(float& time);
+	void Update(const float& time);
 	void Render();
+	static void LoadTexture();
+	static void UnloadTexture();
+	void Reset();
+	void SetAsHit();
 
 };
 

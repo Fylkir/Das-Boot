@@ -21,7 +21,7 @@ void GameOverLevel::Unload()
 	MainLevel::_score = 0;
 
 }
-void GameOverLevel::Update(double time, double dtime)
+void GameOverLevel::Update(const float& time, const float& dtime)
 {
 
 }

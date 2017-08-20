@@ -25,14 +25,13 @@ Graphics::~Graphics()
 	if (renderTarget) renderTarget->Release();
 	if (brush) brush->Release();
 	if (blueBrush) blueBrush->Release();
-	if (pSink) pSink->Release();
-	if (pathGeometry) pathGeometry->Release();
 	if (pDWriteFactory) pDWriteFactory->Release();
 	if (pTextFormat) pTextFormat->Release();
 }
 
 bool Graphics::Init(HWND windowHandle)
 {
+
 	HRESULT res = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
 	if (res != S_OK) return false;
 	static const WCHAR msc_fontName[] = L"Verdana";

@@ -3,11 +3,12 @@
 class FuelIndicator :
 	public GameObject
 {
+private:
 	float _fuel;
 public:
 	FuelIndicator();
 	~FuelIndicator();
-	void Update(float& fuel);
+	void Update(const float& fuel);
 	void Render();
 };
 

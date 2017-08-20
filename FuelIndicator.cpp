@@ -16,7 +16,7 @@ FuelIndicator::~FuelIndicator()
 {
 }
 
-void FuelIndicator::Update(float& fuel)
+void FuelIndicator::Update(const float& fuel)
 {
 	_fuel = fuel;
 }

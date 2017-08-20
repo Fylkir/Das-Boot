@@ -12,10 +12,10 @@ public:
 	~RiverSegment();
 
 
-	void Update(float& time);
+	void Update(const float& time);
 	void Render();
-	bool IsHit(PlayerBoat* pB);
-	void IsShot(std::list<Torpedo*>& t, std::list<Torpedo*>::iterator& it);
+	void CheckHits(PlayerBoat& pB);
+	void CheckShots(std::list<Torpedo>& t, std::list<Torpedo>::iterator& it);
 	float getLeftBank();
 	float getRightBank();
 	float getSpan();

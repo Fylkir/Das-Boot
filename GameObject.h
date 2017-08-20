@@ -10,7 +10,7 @@ protected:
 	float _x, _y, _x0, _y0, _t0=0.; //WSPOLRZEDNE PUNKTU REFERENCYJNEGO OBIEKTU
 
 public:
-	static void Init(Graphics* graphics);
+	static void Init(Graphics& graphics);
 
 	virtual ~GameObject();
 

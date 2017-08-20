@@ -3,7 +3,12 @@
 
 
 Graphics* GameObject::gfx;
-void GameObject::Init(Graphics* graphics) { gfx = graphics; }
+
+
+void GameObject::Init(Graphics& graphics) 
+{
+	gfx = &graphics; 
+}
 
 void GameObject::Render()
 {

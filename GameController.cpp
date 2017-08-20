@@ -1,6 +1,9 @@
 #include "GameController.h"
 
-
+GameLevel* GameController::_currentLevel;
+bool GameController::Loading;
+std::vector<GameLevel*> GameController::_levels_v;
+Timer GameController::_timer;
 
 GameController::GameController()
 {
@@ -11,54 +14,51 @@ GameController::~GameController()
 {
 }
 
-GameLevel* GameController::currentLevel;
-bool GameController::Loading;
-std::vector<GameLevel*> GameController::_levels;
-Timer* GameController::timer;
+
 
 
 
 void GameController::Init()
 {
 	Loading = true;
-	currentLevel = 0;
+	_currentLevel = 0;
 }
 
 
 
 void GameController::LoadLevels(std::vector<GameLevel*> levels)
 {
-	timer = new Timer();
+	
 	Loading = true;
-	_levels = levels;
-	currentLevel = _levels[0];
-	currentLevel->Load();
+	_levels_v = levels;
+	_currentLevel = _levels_v[0];
+	_currentLevel->Load();
+	_timer.Reset();
 	Loading = false;
 }
 void GameController::SwitchLevel(int a)
 {
 	Loading = true;
-	currentLevel->Unload();
-	//delete currentLevel;
-	currentLevel = _levels[a];
-	currentLevel->Load();
-	timer->Reset();
+	_currentLevel->Unload();
+	_currentLevel = _levels_v[a];
+	_currentLevel->Load();
+	_timer.Reset();
 	Loading = false;
 }
 void GameController::Render()
 {
 	if (Loading) return;
-	currentLevel->Render();
+	_currentLevel->Render();
 }
 void GameController::Update()
 {
 	if (Loading) return;
-	timer->Update();
-	if(currentLevel->switchTo <0) currentLevel->Update(timer->GetTimeTotal(), timer->GetTimeDelta());
-	else SwitchLevel(currentLevel->switchTo);
+	_timer.Update();
+	if(_currentLevel->switchTo <0) _currentLevel->Update(_timer.GetTimeTotal(), _timer.GetTimeDelta());
+	else SwitchLevel(_currentLevel->switchTo);
 }
 
 void GameController::ProcessKey(int& h, int& v, int& s)
 {
-	currentLevel->ProcessKey(h, v, s, timer->GetTimeDelta());
+	_currentLevel->ProcessKey(h, v, s, _timer.GetTimeDelta());
 }

@@ -3,17 +3,23 @@
 class Torpedo :
 	public GameObject
 {
+
+private:
+	static Texture* _tex;
+	bool _isShot;
 public:
-	static Texture* tex;
-	bool Shot;
+
 	Torpedo(float x, float y, float t0);
 	~Torpedo();
 
-	void Move(float& time);
-	void Update(float& time);
+	void Move(const float& time);
+	void Update(const float& time);
 	bool IsOutOfScreen();
 	void Render();
-
+	static void LoadTexture();
+	static void UnloadTexture();
+	void SetAsShot();
+	bool IsShot();
 
 
 };

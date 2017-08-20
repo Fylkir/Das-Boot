@@ -13,12 +13,12 @@ class MainLevel : public GameLevel
 {
 	friend class GameOverLevel;
 private:
-	PlayerBoat* playerBoat;
-	River* river;
-	FuelIndicator* fInd;
-	ScoreIndicator* sInd;
-	static float _time;
-	static float _fuel;
+	PlayerBoat _playerBoat;
+	River _river;
+	FuelIndicator _fInd;
+	ScoreIndicator _sInd;
+	float _time;
+	float _fuel;
 	static int _score;
 
 public:
@@ -28,7 +28,7 @@ public:
 
 	void Load() override;
 	void Unload() override;
-	void Update(double time, double dtime) override;
+	void Update(const float& time, const float& dtime) override;
 	void Render() override;
 	void ProcessKey(int& h, int& v, int& s, double dtime) override;
 };

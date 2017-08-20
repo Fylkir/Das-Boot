@@ -10,7 +10,7 @@ public:
 
 	void Load() override;
 	void Unload() override;
-	void Update(double time, double dtime) override;
+	void Update(const float& time, const float& dtime) override;
 	void Render() override;
 	void ProcessKey(int& h, int& v, int& s, double dtime);
 };

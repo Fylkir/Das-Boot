@@ -21,7 +21,7 @@ RiverSegment::RiverSegment(float xbl, float xbr, float xtl, float xtr, float ymi
 RiverSegment::~RiverSegment()
 {
 }
-void RiverSegment::Update(float& time)
+void RiverSegment::Update(const float& time)
 {
 	MoveDown(time);
 }
@@ -33,22 +33,21 @@ void RiverSegment::Render()
 
 
 /*******SPRAWDZANIE WPADNIECIA LODKI NA BRZEG SEGMENTU RZEKI*******/
-bool RiverSegment::IsHit(PlayerBoat* pB)
+void RiverSegment::CheckHits(PlayerBoat& pB)
 {
-	if (fabs(pB->getY() - _y) <= 800. / 2. / RIV_SEGMENTS)
-		if(pB->getX() < (_x_bl + _x_tl)/2. +10 || pB->getX() > (_x_br + _x_tr) / 2. -10) return true;
-	return false;
+	if (fabs(pB.getY() - _y) <= 800. / 2. / RIV_SEGMENTS)
+		if(pB.getX() < (_x_bl + _x_tl)/2. +10 || pB.getX() > (_x_br + _x_tr) / 2. -10) _isHit = true;
 }
 
-void RiverSegment::IsShot(std::list<Torpedo*>& t, std::list<Torpedo*>::iterator& it)
+void RiverSegment::CheckShots(std::list<Torpedo>& t, std::list<Torpedo>::iterator& it)
 {
 	{
 		for (it = t.begin(); it != t.end(); it++)
 		{
-			if (fabs((*it)->getY() - _y) <= 800. / 2. / RIV_SEGMENTS)
-				if ((*it)->getX() < (_x_bl + _x_tl) / 2. + 5 || (*it)->getX() > (_x_br + _x_tr) / 2. - 5)
+			if (fabs((*it).getY() - _y) <= 800. / 2. / RIV_SEGMENTS)
+				if ((*it).getX() < (_x_bl + _x_tl) / 2. + 5 || (*it).getX() > (_x_br + _x_tr) / 2. - 5)
 				{
-					(*it)->Shot = true;
+					(*it).SetAsShot();
 				}
 		}
 	}
